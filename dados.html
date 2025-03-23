@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informações de Cadastro</title>
+    <link rel="stylesheet" href="css/estilo.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            position: relative; /* Necessário para que o posicionamento fixo da imagem funcione corretamente */
+        }
+        .logo {
+            position: fixed;
+            bottom: 0;
+            top: 0; //Ímagem no Topo: Usando position: fixed; top: 0; left: 0; para posicionar a imagem no canto superior esquerdo.//
+            width: 5cm;
+            height: 2cm;
+            object-fit: contain;
+            margin: 0;
+            padding: 0;
+            z-index: 10; /* Garante que a imagem fique sobre outros conteúdos */
+        }
+        .table-container {
+            margin-bottom: 2.2cm; /* Ajuste a margem para não sobrepor o conteúdo com a imagem */
+        }
+    </style>
+</head>
+<body>
+    <!-- Logomarca -->
+    <img src="logo.png" alt="Logomarca da Empresa" class="logo">
+
+    <div class="table-container">
+        <h2>Informações Exclusivas</h2>
+        <table id="infoTable">
+            <tr>
+                <th>TIPO HOMOLOGADO</th>
+                <th>CÓDIGO NIEV</th>
+                <th>Nº do CAT</th>
+                <th>Nº do CCT</th>
+                <th>VENCIMENTO</th>
+                <th>QTD dias para Vencer</th>
+                <th>STATUS</th>
+           
+            </tr>
+            <tr>
+                <td>Roll-on-Roll-off</td>
+                <td>MTB5Z133</td>
+                <td><a href="CAT nº 0120-2022-133.pdf" target="_blank">0120-2022</a></td>
+                <td><a href="CCT nº 28095-2024-133.pdf" target="_blank">28095-</a></td>
+                <td>21/08/2026</td>
+                <td></td>
+                <td></td>
+               
+            </tr>
+            <!-- Adicione mais linhas conforme necessário -->
+        </table>
+    </div>
+
+    <script>
+        function calculateDaysAndStatus() {
+            const rows = document.querySelectorAll("#infoTable tr:not(:first-child)");
+            const today = new Date();
+
+            rows.forEach(row => {
+                const vencimentoCell = row.cells[4];
+                const daysLeftCell = row.cells[5];
+                const statusCell = row.cells[6];
+
+                // Converte a data de vencimento de dd/mm/aaaa para um objeto Date
+                const vencimentoParts = vencimentoCell.textContent.split('/');
+                const vencimentoDate = new Date(vencimentoParts[2], vencimentoParts[1] - 1, vencimentoParts[0]);
+
+                // Calcula a diferença em dias
+                const timeDifference = vencimentoDate - today;
+                const daysLeft = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+                // Preenche a coluna "QTD dias para Vencer"
+                daysLeftCell.textContent = daysLeft;
+
+                // Aplica a formatação condicional na coluna "STATUS"
+                if (daysLeft >= 60 && daysLeft <= 90) {
+                    statusCell.textContent = "Atenção";
+                    statusCell.style.backgroundColor = "yellow";
+                } else if (daysLeft >= 0 && daysLeft < 60) {
+                    statusCell.textContent = "Urgente";
+                    statusCell.style.backgroundColor = "orange";
+                } else if (daysLeft < 0) {
+                    statusCell.textContent = "Vencido";
+                    statusCell.style.backgroundColor = "red";
+                } else {
+                    statusCell.textContent = "Em dia";
+                    statusCell.style.backgroundColor = "green";
+                }
+            });
+        }
+
+        // Executa a função quando a página é carregada
+        window.onload = calculateDaysAndStatus;
+    </script>
+</body>
+</html>
